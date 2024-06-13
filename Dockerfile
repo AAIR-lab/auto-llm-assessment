@@ -8,4 +8,4 @@ ENV PYTHONHASHSEED=0
 
 RUN ./scripts/install.sh
 RUN rm dataset.zip
-RUN rm -fr .git
+RUN rm -fr .git*

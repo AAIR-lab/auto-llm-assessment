@@ -36,11 +36,11 @@ We recommend using a pre-built docker image to run AutoEval.
 
 First, pull the container.
 ```bash
-docker pull autoeval:latest
+docker pull rushangkaria/autoeval:latest
 ```
 Next, login to the container.
 ```
-docker run -it --name autoeval autoeval:latest
+docker run -it --name autoeval rushangkaria/autoeval:latest
 ```
 
 ## Datasets
@@ -54,8 +54,9 @@ regex: Regular Expressions
 ```
 
 ### Packaged datasets
-The packaged datasets and their prompts can be found in the `datasets/`
-directory. Please unzip the zip file to view the contents.
+The packaged datasets and their prompts can be found in the `dataset.zip`
+file. Please unzip the zip file to view the contents. We release our datasets
+under the Creative Commons v4 license.
 
 The file hierarchy is as follows: `prompt_type -- batch_no -- dataset_type`.
 Each dataset type has a corresponding `dataset.json` which contains the vanilla
@@ -63,10 +64,19 @@ dataset and contains several `<model>.verified.json` files which contain
 results from FS -> NL -> FS that may be used as a dataset for computing external
 metrics that are not provided.
 
+Each dataset is a `json` with an `info` key that contains the seed and other
+parameters used to generate it. The `data` field contains a list of the data.
+Each data item is a dictionary with `fs` indicating the ground-truth formal syntax
+and some keys like `depth` indicating the CFG tree depth for the expression.
+
+The verified datsets contain additional fields like `llm_fs` to indicate the
+llm generated formal syntax, the complete LLM response in `conversation_history`,
+and the verification results in `verification`.
+
 ### Generating your own datasets
 Use the following script
 ```
-python dataset_generator \
+python dataset_generator.py \
     --base-dir <base_dir> \
     --dataset-type <dataset_type> \
     --depth <depth> \
@@ -87,11 +97,15 @@ in `nlfs.verifier`.
 
 ## Reproducing NeurIPS-24 results
 
-To reproduce our results, use the following scripts
+To reproduce our results reported in the main paper, use the following scripts.
+You can skip the LLM or the verifier by using the `--skip-nlfs` and `--skip-verify`
+options to the command below. The results and log files are stored in the same
+directory. For example, batch 0, fol saves its results in 
+`./dataset/zero-shot/batch0/fol`.
 ```bash
 python3 evaluation.py --auto \
   --total-batches 10 \
-  --base-dir ./datasets/zero-shot/
+  --base-dir ./dataset/zero-shot/
   --datasets fol ksat ... \
   --models gpt-3.5-turbo claude ...
 ```
