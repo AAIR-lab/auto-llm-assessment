@@ -40,7 +40,13 @@ docker pull rushangkaria/autoeval:latest
 ```
 Next, login to the container.
 ```
-docker run -it --name autoeval rushangkaria/autoeval:latest
+docker run -it \
+    --name autoeval \
+    -e PYTHONHASHSEED=$PYTHONHASHSEED \
+    -e OPENAI_API_KEY=$OPENAI_API_KEY \
+    -e ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY \
+    -e HUGGINGFACE_API_KEY=$HUGGINGFACE_API_KEY \
+    rushangkaria/autoeval:latest
 ```
 
 ## Datasets
